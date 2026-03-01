@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Aadhithiya J - AI Developer & Problem Solver. Building intelligent systems and designing scalable AI architectures.">
+    <meta name="keywords" content="AI Developer, Machine Learning, Portfolio, Deep Learning, Aadhi J">
+    <meta property="og:title" content="Aadhi J | AI Engineer">
+    <meta property="og:description"
+        content="Cinematic portfolio of Aadhi J, an AI Engineer creating intelligent architectures.">
+    <meta property="og:type" content="website">
+    <title>Aadhi J | AI Engineer</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f0f0f',
+                        soft: '#eaeaea',
+                        accent: '#D6CFE1',
+                        'accent-dark': '#B8B0C8'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body
+    class="bg-soft text-dark dark:bg-dark dark:text-soft font-sans antialiased selection:bg-accent selection:text-dark transition-colors duration-500">
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor hidden md:block"></div>
+    <div class="custom-cursor-dot hidden md:block"></div>
+
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Data Particles Container -->
+    <div id="particles-container" class="fixed inset-0 pointer-events-none z-0 opacity-40"></div>
+
+    <!-- Vertical Connecting Line -->
+    <div class="fixed left-4 md:left-8 top-0 bottom-0 w-px bg-white/[0.03] z-0 hidden md:block"></div>
+    <div id="scroll-line-progress" class="fixed left-4 md:left-8 top-0 w-px bg-accent/40 z-0 hidden md:block origin-top"
+        style="height: 100vh; transform: scaleY(0);"></div>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="text-accent text-sm tracking-[0.3em] uppercase font-light overflow-hidden">
+            <span class="preloader-text inline-block translate-y-full">Initializing Environment...</span>
+        </div>
+    </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="fixed top-0 left-0 h-1 bg-accent/50 z-50 origin-left" id="scroll-progress"
+        style="width: 100%; transform: scaleX(0);"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 w-full z-40 bg-soft/80 dark:bg-dark/80 backdrop-blur-md border-b border-dark/[0.05] dark:border-white/[0.05] transition-all duration-500"
+        id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="#scene-2"
+                        class="text-accent-dark dark:text-accent font-bold text-xl tracking-widest font-mono hover:text-dark dark:hover:text-white transition-colors">AJ.</a>
+                </div>
+
+                <!-- Desktop Menu & Theme Toggle -->
+                <div class="hidden md:flex items-center">
+                    <div class="ml-10 flex items-baseline space-x-8 mr-6">
+                        <a href="#scene-2"
+                            class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">About</a>
+                        <a href="#scene-3"
+                            class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">Work</a>
+                        <a href="#scene-4"
+                            class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">Skills</a>
+                        <a href="#scene-6"
+                            class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">Contact</a>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle"
+                        class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent focus:outline-none p-2 rounded-full hover:bg-dark/5 dark:hover:bg-white/5 transition-colors"
+                        title="Toggle Theme">
+                        <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 4.22a1 1 0 011.415 0l.708.708a1 1 0 01-1.414 1.414l-.708-.708a1 1 0 010-1.414zM16 10a1 1 0 011 1h1a1 1 0 110-2h-1a1 1 0 01-1 1zm-4.22 4.22a1 1 0 010 1.415l-.708.708a1 1 0 01-1.414-1.414l.708-.708a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-4.22a1 1 0 01-1.415 0l-.708-.708a1 1 0 011.414-1.414l.708.708a1 1 0 010 1.414zM4 10a1 1 0 01-1-1H2a1 1 0 110 2h1a1 1 0 011-1zm4.22-4.22a1 1 0 010-1.415l.708-.708a1 1 0 011.414 1.414l-.708.708a1 1 0 01-1.414 0z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn"
+                        class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent focus:outline-none p-2 relative z-50">
+                        <svg class="w-6 h-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" id="menu-icon-path" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu"
+            class="fixed inset-0 bg-soft/95 dark:bg-dark/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <div class="flex flex-col space-y-8 text-center text-2xl font-light tracking-widest">
+                <a href="#scene-2"
+                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">About</a>
+                <a href="#scene-3"
+                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">Work</a>
+                <a href="#scene-4"
+                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">Skills</a>
+                <a href="#scene-6"
+                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Scene 1: The Beginning -->
+    <section id="scene-1"
+        class="relative flex flex-col items-center justify-center min-h-screen z-10 py-20 px-4 md:px-8 overflow-hidden">
+
+        <!-- Interactive Grid Background for Anime.js stagger -->
+        <div id="interactive-grid"
+            class="absolute inset-0 z-0 flex flex-wrap content-center justify-center opacity-20 pointer-events-auto">
+            <!-- Grid generated via JS -->
+        </div>
+
+        <!-- Animated background element-->
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div
+                class="bg-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] bg-accent/5 rounded-full blur-[100px] md:blur-[120px]">
+            </div>
+        </div>
+
+        <div class="relative z-10 text-center max-w-4xl mx-auto flex flex-col items-center gap-6">
+            <h1
+                class="hero-text text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-2 text-dark dark:text-white">
+                Everything begins with
+                curiosity.</h1>
+            <p class="hero-subtext text-xl md:text-2xl font-light text-dark/80 dark:text-soft/80 translate-y-4">
+                I design and deploy intelligent systems at scale.
+            </p>
+        </div>
+    </section>
+
+
+    <section id="scene-2"
+        class="relative min-h-screen flex flex-col justify-center py-20 px-4 md:px-16 z-10 bg-soft dark:bg-dark">
+        <div class="max-w-6xl mx-auto w-full relative grid lg:grid-cols-2 gap-16 items-center">
+
+            <div class="about-content space-y-8 order-2 lg:order-1 text-center lg:text-left">
+                <h2
+                    class="about-element text-xl text-accent-dark dark:text-accent tracking-[0.2em] uppercase origin-left translate-x-[-30px]">
+                    About Me</h2>
+                <h3
+                    class="about-element text-4xl md:text-5xl font-bold leading-tight origin-left translate-x-[-30px] text-dark dark:text-white">
+                    Bridging the gap between <span class="text-dark/50 dark:text-white/50">data</span> and <span
+                        class="text-dark/50 dark:text-white/50">decision.</span></h3>
+                <p
+                    class="about-element font-light text-dark/80 dark:text-soft/80 leading-relaxed text-lg origin-left translate-x-[-30px]">
+                    I am <span class="font-bold text-dark dark:text-white">Aadhithiya J</span>, an AI Engineer focused
+                    on
+                    building intelligent architectures that solve complex,
+                    real-world
+                    problems. My journey involves everything from understanding raw data completely, to designing neural
+                    networks, to deploying those as scalable, production-ready systems.
+                </p>
+
+                <div class="about-element origin-left translate-x-[-30px] pt-4">
+                    <a href="resume.pdf" target="_blank"
+                        class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-accent-dark dark:bg-accent text-white dark:text-dark hover:bg-dark dark:hover:bg-white hover:scale-105 transition-all duration-300 font-medium text-sm group shadow-[0_0_20px_rgba(184,176,200,0.2)] dark:shadow-[0_0_20px_rgba(214,207,225,0.2)] hover:shadow-[0_0_30px_rgba(184,176,200,0.4)] dark:hover:shadow-[0_0_30px_rgba(214,207,225,0.4)]">
+                        <span class="tracking-wide">Download Resume</span>
+                        <svg class="w-4 h-4 group-hover:translate-y-1 transition-transform duration-300" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-8 pt-6 max-w-lg mx-auto lg:mx-0">
+                    <div class="stat-item translate-y-6">
+                        <div class="stat-number text-4xl font-bold mb-2 text-dark dark:text-soft" data-val="12">0</div>
+                        <div class="text-xs text-dark/50 dark:text-soft/50 uppercase tracking-[0.1em]">AI Projects</div>
+                    </div>
+                    <div class="stat-item translate-y-6">
+                        <div class="stat-number text-4xl font-bold mb-2 text-dark dark:text-soft" data-val="5">0</div>
+                        <div class="text-xs text-dark/50 dark:text-soft/50 uppercase tracking-[0.1em]">Models trained &
+                            evaluated</div>
+                    </div>
+                    <div class="stat-item translate-y-6 col-span-2 lg:col-span-1">
+                        <div class="stat-number text-4xl font-bold mb-2 text-dark dark:text-soft" data-val="4">0</div>
+                        <div class="text-xs text-dark/50 dark:text-soft/50 uppercase tracking-[0.1em]">Hackathons
+                            Participated</div>
+                    </div>
+                    <div class="stat-item translate-y-6 col-span-2 lg:col-span-1">
+                        <div class="stat-number text-4xl font-bold mb-2 text-dark dark:text-soft" data-val="2">0</div>
+                        <div class="text-xs text-dark/50 dark:text-soft/50 uppercase tracking-[0.1em]">Production-ready
+                            Systems</div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="profile-container about-element translate-x-[30px] order-1 lg:order-2 flex justify-center lg:justify-end">
+                <div
+                    class="relative w-64 h-72 md:w-[350px] md:h-[420px] rounded-[2rem] overflow-hidden bg-dark/[0.02] dark:bg-white/[0.02] backdrop-blur-sm border border-dark/[0.05] dark:border-white/[0.05] p-3 group">
+                    <div
+                        class="w-full h-full rounded-2xl bg-gradient-to-br from-dark/[0.05] dark:from-white/[0.05] to-transparent flex items-center justify-center border border-dark/[0.02] dark:border-white/[0.02] relative overflow-hidden">
+                        <img src="profile.jpeg" alt="Aadhithiya J Profile"
+                            class="w-full h-full object-cover object-top filter grayscale sepia-[.3] hue-rotate-[240deg] opacity-70 transition-all duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:sepia-0 group-hover:hue-rotate-0 group-hover:opacity-100 mix-blend-luminosity group-hover:mix-blend-normal relative z-10">
+                        <!-- Subtle overlay for blending -->
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-soft/80 dark:from-dark/80 via-transparent to-transparent pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Scene 3: Projects / Selected Work -->
+    <section id="scene-3" class="relative min-h-screen py-32 px-4 md:px-8 z-10 w-full">
+        <div class="max-w-7xl mx-auto">
+            <h2
+                class="work-title text-xl text-accent-dark dark:text-accent tracking-[0.2em] uppercase text-center mb-4 translate-y-8">
+                Selected Work</h2>
+            <h3
+                class="work-title text-4xl md:text-6xl font-bold text-center mb-20 translate-y-8 text-dark dark:text-white">
+                Intelligent
+                Architectures</h3>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project Card 1 -->
+                <div
+                    class="project-card translate-y-12 rounded-2xl bg-dark/[0.015] dark:bg-white/[0.015] border border-dark/[0.04] dark:border-white/[0.04] cursor-pointer backdrop-blur-md transition-colors hover:bg-dark/[0.03] dark:hover:bg-white/[0.03] group relative">
+                    <a href="https://github.com/Aadhi-07/Studymate.git" target="_blank"
+                        class="absolute inset-0 z-0 rounded-2xl" title="View Project Details"></a>
+                    <div class="p-6 relative z-10 pointer-events-none">
+                        <div
+                            class="h-48 rounded-xl bg-gradient-to-br from-white/5 to-transparent mb-6 border border-white/5 flex items-center justify-center relative overflow-hidden">
+                            <div
+                                class="w-16 h-16 grid grid-cols-2 gap-2 transition-transform duration-500 group-hover:scale-110">
+                                <div class="bg-accent/40 rounded-sm"></div>
+                                <div class="bg-accent/20 rounded-sm"></div>
+                                <div class="bg-accent/20 rounded-sm"></div>
+                                <div class="bg-accent/60 rounded-sm"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mb-3 relative z-20 pointer-events-auto">
+                            <h3 class="text-xl font-medium text-dark dark:text-soft">RAG-based Study Engine</h3>
+                            <a href="https://github.com/Aadhi-07/Studymate.git" target="_blank"
+                                class="text-soft/40 hover:text-accent transition-colors shrink-0" title="View Source">
+                                <svg class="w-5 h-5 focus:outline-none" fill="currentColor" viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="text-sm text-dark/60 dark:text-soft/60 line-clamp-3 mb-6 font-light leading-relaxed">A
+                            smart study
+                            platform that helps manage learning, track performance, and provide productivity features
+                            for students.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-accent-dark/10 dark:bg-accent/10 border border-accent-dark/20 dark:border-accent/20 text-accent-dark dark:text-accent">Mongo
+                                DB</span>
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-accent-dark/10 dark:bg-accent/10 border border-accent-dark/20 dark:border-accent/20 text-accent-dark dark:text-accent">React
+                                (Frontend)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div
+                    class="project-card translate-y-12 rounded-2xl bg-dark/[0.015] dark:bg-white/[0.015] border border-dark/[0.04] dark:border-white/[0.04] cursor-pointer backdrop-blur-md transition-colors hover:bg-dark/[0.03] dark:hover:bg-white/[0.03] group relative">
+                    <a href="https://github.com/Aadhi-07/content-researching-agent.git" target="_blank"
+                        class="absolute inset-0 z-0 rounded-2xl" title="View Project Details"></a>
+                    <div class="p-6 relative z-10 pointer-events-none">
+                        <div
+                            class="h-48 rounded-xl bg-gradient-to-br from-white/5 to-transparent mb-6 border border-white/5 flex items-center justify-center relative overflow-hidden">
+                            <div class="flex space-x-2 transition-transform duration-500 group-hover:scale-110">
+                                <div class="w-2 h-10 bg-accent/30 rounded-full"></div>
+                                <div class="w-2 h-16 bg-accent/70 rounded-full"></div>
+                                <div class="w-2 h-8 bg-accent/40 rounded-full"></div>
+                                <div class="w-2 h-12 bg-accent/50 rounded-full"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mb-3 relative z-20 pointer-events-auto">
+                            <h3 class="text-xl font-medium text-dark dark:text-soft">AI Content Research Agent</h3>
+                            <a href="https://github.com/Aadhi-07/content-researching-agent.git" target="_blank"
+                                class="text-soft/40 hover:text-accent transition-colors shrink-0" title="View Source">
+                                <svg class="w-5 h-5 focus:outline-none" fill="currentColor" viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="text-sm text-dark/70 dark:text-soft/60 line-clamp-3 mb-6 font-light leading-relaxed">
+                            An intelligent agent that takes user input, searches knowledge sources, and provides concise
+                            summaries and structured info.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-accent-dark/10 dark:bg-accent/10 border border-accent-dark/20 dark:border-accent/20 text-accent-dark dark:text-accent">Langchain</span>
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-accent-dark/10 dark:bg-accent/10 border border-accent-dark/20 dark:border-accent/20 text-accent-dark dark:text-accent">OpenAI
+                                API</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div
+                    class="project-card translate-y-12 rounded-2xl bg-dark/[0.015] dark:bg-white/[0.015] border border-dark/[0.04] dark:border-white/[0.04] cursor-pointer backdrop-blur-md transition-colors hover:bg-dark/[0.03] dark:hover:bg-white/[0.03] group relative">
+                    <a href="https://github.com/Aadhi-07/AI-Medical-diagnosis.git" target="_blank"
+                        class="absolute inset-0 z-0 rounded-2xl" title="View Project Details"></a>
+                    <div class="p-6 relative z-10 pointer-events-none">
+                        <div
+                            class="h-48 rounded-xl bg-gradient-to-br from-white/5 to-transparent mb-6 border border-white/5 flex items-center justify-center relative overflow-hidden">
+                            <div
+                                class="absolute inset-0 flex items-center justify-center opacity-50 transition-transform duration-500 group-hover:scale-110 group-hover:opacity-80">
+                                <svg class="w-24 h-24 text-accent/50" viewBox="0 0 100 100" fill="none"
+                                    stroke="currentColor" stroke-width="1">
+                                    <circle cx="50" cy="50" r="40" stroke-dasharray="4 4" />
+                                    <circle cx="50" cy="50" r="25" />
+                                    <circle cx="50" cy="50" r="10" fill="currentColor" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mb-3 relative z-20 pointer-events-auto">
+                            <h3 class="text-xl font-medium text-dark dark:text-soft">Intelligent Medical Diagnosis
+                                System</h3>
+                            <a href="https://github.com/Aadhi-07/AI-Medical-diagnosis.git" target="_blank"
+                                class="text-soft/40 hover:text-accent transition-colors shrink-0" title="View Source">
+                                <svg class="w-5 h-5 focus:outline-none" fill="currentColor" viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="text-sm text-dark/60 dark:text-soft/60 line-clamp-3 mb-6 font-light leading-relaxed">
+                            An AI tool that
+                            predicts likely medical conditions from symptoms using trained models — a real demonstration
+                            of AI in healthcare.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-accent-dark/10 dark:bg-accent/10 border border-accent-dark/20 dark:border-accent/20 text-accent-dark dark:text-accent">FastAPI</span>
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-accent-dark/10 dark:bg-accent/10 border border-accent-dark/20 dark:border-accent/20 text-accent-dark dark:text-accent">Data
+                                Visualization</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 flex justify-center translate-y-8 work-title">
+                <a href="https://github.com/Aadhi-07/" target="_blank"
+                    class="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-dark/10 dark:border-white/10 text-dark dark:text-soft hover:bg-dark/5 dark:hover:bg-white/5 hover:border-dark/20 dark:hover:border-white/20 transition-all font-medium text-sm group relative overflow-hidden">
+                    <svg class="w-5 h-5 text-dark/50 dark:text-soft/50 group-hover:text-accent-dark dark:group-hover:text-accent transition-colors relative z-10 focus:outline-none"
+                        fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="relative z-10 tracking-wide pt-0.5">Explore on GitHub</span>
+                    <div
+                        class="absolute inset-0 bg-white/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0">
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scene 4: Education & Skills -->
+    <section id="scene-4" class="relative min-h-screen py-24 px-4 md:px-16 z-10 w-full bg-soft dark:bg-[#0a0a0a]">
+        <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-20">
+
+            <!-- Education & Certifications -->
+            <div>
+                <h2
+                    class="edu-title text-3xl font-bold mb-10 origin-left translate-x-[-30px] text-dark dark:text-white">
+                    Education & <span
+                        class="text-accent-dark dark:text-accent text-[2rem] block font-light">Certifications</span>
+                </h2>
+
+                <div
+                    class="space-y-12 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-dark/10 dark:before:via-white/10 before:to-transparent">
+
+                    <div
+                        class="edu-item relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active translate-y-6 opacity-0">
+                        <!-- Timeline Node -->
+                        <div
+                            class="flex items-center justify-center w-5 h-5 rounded-full border-2 border-accent-dark dark:border-accent bg-soft dark:bg-dark shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+                        </div>
+                        <!-- Card -->
+                        <div
+                            class="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-6 rounded-2xl bg-dark/[0.015] dark:bg-white/[0.015] border border-dark/[0.04] dark:border-white/[0.04]">
+                            <div class="flex items-center justify-between mb-2">
+                                <span
+                                    class="text-accent-dark dark:text-accent text-xs font-mono uppercase tracking-wider">2023
+                                    -
+                                    Present</span>
+                            </div>
+                            <h3 class="text-lg font-medium text-dark dark:text-soft">B.E in Computer Science and
+                                Engineering</h3>
+                            <p class="text-sm text-dark/60 dark:text-soft/60 mt-1 font-light">Specializing in Deep
+                                Learning and Neural
+                                Architectures.</p>
+                        </div>
+                    </div>
+                    <div
+                        class="edu-item relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active translate-y-6 opacity-0">
+                        <div
+                            class="flex items-center justify-center w-5 h-5 rounded-full border border-dark/20 dark:border-white/20 bg-soft dark:bg-dark shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 group-hover:border-accent-dark dark:group-hover:border-accent transition-colors">
+                        </div>
+                        <div
+                            class="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-6 rounded-2xl bg-dark/[0.015] dark:bg-white/[0.015] border border-dark/[0.04] dark:border-white/[0.04]">
+                            <div class="flex items-center justify-between mb-2">
+                                <span
+                                    class="text-dark/40 dark:text-white/40 text-xs font-mono uppercase tracking-wider">2025
+                                    (Jan)</span>
+                            </div>
+                            <h3 class="text-lg font-medium text-dark dark:text-soft">Fundamentals of AI (IBM)</h3>
+                            <p class="text-sm text-dark/60 dark:text-soft/60 mt-1 font-light">Core AI concepts such deep
+                                learning,neural
+                                networks and search algorithms.</p>
+                        </div>
+                    </div>
+                    <div
+                        class="edu-item relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active translate-y-6 opacity-0">
+                        <div
+                            class="flex items-center justify-center w-5 h-5 rounded-full border border-dark/20 dark:border-white/20 bg-soft dark:bg-dark shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 group-hover:border-accent-dark dark:group-hover:border-accent transition-colors">
+                        </div>
+                        <div
+                            class="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-6 rounded-2xl bg-dark/[0.015] dark:bg-white/[0.015] border border-dark/[0.04] dark:border-white/[0.04]">
+                            <div class="flex items-center justify-between mb-2">
+                                <span
+                                    class="text-dark/40 dark:text-white/40 text-xs font-mono uppercase tracking-wider">2025
+                                    (May)</span>
+                            </div>
+                            <h3 class="text-lg font-medium text-dark dark:text-soft">Cloud Computing (IIT Kharagpur)
+                            </h3>
+                            <p class="text-sm text-dark/60 dark:text-soft/60 mt-1 font-light">Focuses on scalable,
+                                reliable, and
+                                cost-efficient application deployment in cloud environments</p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div>
+                <h2
+                    class="skill-title text-3xl font-bold mb-10 origin-left translate-x-[-30px] text-dark dark:text-white">
+                    Technical <span
+                        class="text-accent-dark dark:text-accent text-[2rem] block font-light">Arsenal</span></h2>
+
+                <div class="space-y-8">
+                    <!-- Skill category 1 -->
+                    <div class="skill-group opacity-0 translate-y-4">
+                        <h4 class="text-sm font-mono text-dark/50 dark:text-soft/50 uppercase tracking-widest mb-4">Core
+                            AI & Modeling
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">PyTorch</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">TensorFlow
+                                & Keras</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Large
+                                Language Models (LLMs)</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">HuggingFace
+                                Transformers</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Computer
+                                Vision (OpenCV)</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Scikit-Learn</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill category 2 -->
+                    <div class="skill-group opacity-0 translate-y-4">
+                        <h4 class="text-sm font-mono text-dark/50 dark:text-soft/50 uppercase tracking-widest mb-4">
+                            MLOps & Deployment
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Docker
+                            </span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">MLflow
+                                & Weights & Biases</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">FastAPI
+                                & Flask</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">AWS
+                                SageMaker</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">CI/CD
+                                Pipelines</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill category 3 -->
+                    <div class="skill-group opacity-0 translate-y-4">
+                        <h4 class="text-sm font-mono text-dark/50 dark:text-soft/50 uppercase tracking-widest mb-4">Data
+                            Engineering &
+                            Tools</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Python
+                                & C++</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">SQL
+                                & NoSQL</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Apache
+                                Java</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Vector
+                                Databases (Pinecone/Milvus)</span>
+                            <span
+                                class="skill-tag px-4 py-2 rounded-full border border-dark/10 dark:border-white/10 bg-dark/[0.01] dark:bg-white/[0.01] hover:bg-accent-dark/10 dark:hover:bg-accent/10 hover:border-accent-dark/40 dark:hover:border-accent/40 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(184,176,200,0.2)] dark:hover:shadow-[0_0_15px_rgba(214,207,225,0.2)] transition-all cursor-default scale-90 text-dark dark:text-soft">Git</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Scene 5: The Vision -->
+    <section id="scene-5"
+        class="relative min-h-screen flex items-center justify-center py-20 px-4 z-10 overflow-hidden">
+        <div class="vision-glow absolute inset-0 bg-transparent pointer-events-none"></div>
+        <div class="relative z-10 text-center max-w-5xl w-full">
+            <h2
+                class="vision-text text-5xl md:text-7xl lg:text-[7rem] leading-[1.1] font-bold tracking-tighter translate-y-16 text-dark dark:text-white">
+                The future belongs<br>to those who build it.
+            </h2>
+        </div>
+    </section>
+
+    <!-- Scene 6: Contact -->
+    <section id="scene-6"
+        class="relative min-h-[80vh] flex flex-col items-center justify-center py-32 px-4 z-10 border-t border-dark/[0.02] dark:border-white/[0.02] bg-soft dark:bg-[#0a0a0a]">
+        <div class="max-w-2xl w-full text-center mb-16">
+            <h2 class="contact-element text-4xl md:text-6xl font-bold mb-6 translate-y-6 text-dark dark:text-white">
+                Let's build together.</h2>
+            <p class="contact-element text-lg text-dark/60 dark:text-soft/60 translate-y-6 font-light">Reach out for
+                collaborations,
+                inquiries, or just to say hi.</p>
+        </div>
+
+        <form id="contactForm" class="w-full max-w-xl space-y-8 relative z-10" action="https://formspree.io/f/mgolqjqe"
+            method="POST">
+
+            <div
+                class="contact-element translate-y-6 relative group border-b border-dark/10 dark:border-white/10 focus-within:border-accent-dark dark:focus-within:border-accent transition-colors duration-500">
+                <input type="text" name="name" placeholder="Your Name" required
+                    class="w-full bg-transparent px-0 py-4 text-dark dark:text-soft placeholder:text-dark/30 dark:placeholder:text-soft/30 focus:outline-none focus:ring-0">
+            </div>
+
+            <div
+                class="contact-element translate-y-6 relative group border-b border-dark/10 dark:border-white/10 focus-within:border-accent-dark dark:focus-within:border-accent transition-colors duration-500">
+                <input type="email" name="email" placeholder="Your Email" required
+                    class="w-full bg-transparent px-0 py-4 text-dark dark:text-soft placeholder:text-dark/30 dark:placeholder:text-soft/30 focus:outline-none focus:ring-0">
+            </div>
+
+            <div
+                class="contact-element translate-y-6 relative group border-b border-dark/10 dark:border-white/10 focus-within:border-accent-dark dark:focus-within:border-accent transition-colors duration-500">
+                <textarea name="message" placeholder="Your Message" rows="4" required
+                    class="w-full bg-transparent px-0 py-4 text-dark dark:text-soft placeholder:text-dark/30 dark:placeholder:text-soft/30 focus:outline-none focus:ring-0 resize-none"></textarea>
+            </div>
+
+            <div class="contact-element translate-y-6 pt-10 flex justify-center">
+                <button type="submit"
+                    class="submit-btn magnetic-btn px-10 py-4 rounded-full bg-dark dark:bg-soft text-soft dark:text-dark font-medium hover:bg-dark/90 dark:hover:bg-white transition-colors flex items-center gap-3 relative overflow-hidden">
+                    <span class="btn-text tracking-wide z-10 pointer-events-none">
+                        Send Message
+                    </span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Popup -->
+        <div id="popup" class="fixed top-8 right-8 bg-dark dark:bg-soft text-soft dark:text-dark px-6 py-4 rounded-xl shadow-lg
+            opacity-0 translate-y-4 pointer-events-none
+            transition-all duration-500 z-50">
+            Message sent successfully..!!
+        </div>
+
+        <!-- Script -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById("contactForm");
+                const popup = document.getElementById("popup");
+
+                form.addEventListener("submit", async function (e) {
+                    e.preventDefault(); // stops redirect
+
+                    const data = new FormData(form);
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: "POST",
+                            body: data,
+                            headers: {
+                                "Accept": "application/json"
+                            }
+                        });
+
+                        if (response.ok) {
+                            form.reset();
+
+                            popup.classList.remove("opacity-0", "translate-y-4", "pointer-events-none");
+                            popup.classList.add("opacity-100", "translate-y-0");
+
+                            setTimeout(() => {
+                                popup.classList.add("opacity-0", "translate-y-4");
+                                popup.classList.remove("opacity-100", "translate-y-0");
+                            }, 3000);
+                        } else {
+                            alert("Something went wrong. Please try again.");
+                        }
+                    } catch (error) {
+                        alert("Network error. Please try again.");
+                    }
+                });
+            });
+        </script>
+
+        <div class="contact-element translate-y-6 flex justify-center gap-8 mt-20 relative z-10 w-full mb-8">
+            <a href="mailto:aadhithiyajayaraman@gmail.com"
+                class="text-dark/50 dark:text-soft/50 hover:text-accent-dark dark:hover:text-accent transition-all hover:-translate-y-1 duration-300"
+                title="Email" target="_blank">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/aadhi-j-8a0671292"
+                class="text-dark/50 dark:text-soft/50 hover:text-accent-dark dark:hover:text-accent transition-all hover:-translate-y-1 duration-300"
+                title="LinkedIn" target="_blank">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+            </a>
+            <a href="https://github.com/Aadhi-07"
+                class="text-dark/50 dark:text-soft/50 hover:text-accent-dark dark:hover:text-accent transition-all hover:-translate-y-1 duration-300"
+                title="GitHub" target="_blank">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd"
+                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                        clip-rule="evenodd" />
+                </svg>
+            </a>
+        </div>
+
+        <footer
+            class="absolute bottom-12 text-center w-full text-xs text-dark/30 dark:text-soft/30 contact-element translate-y-6 tracking-[0.2em] uppercase">
+            © 2026 Aadhi J.
+        </footer>
+    </section>
+
+    <!-- Custom Interaction Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>

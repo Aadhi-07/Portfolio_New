@@ -1,0 +1,629 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const preloaderText = document.querySelector('.preloader-text');
+    const preloader = document.getElementById('preloader');
+    const tlPreload = anime.timeline({
+        easing: 'easeOutExpo'
+    });
+    tlPreload.add({
+        targets: '.preloader-text',
+        translateY: ['100%', '0%'],
+        duration: 1200,
+        delay: 200
+    })
+        .add({
+            targets: '.preloader-text',
+            opacity: [1, 0],
+            duration: 800,
+            delay: 800
+        })
+        .add({
+            targets: '#preloader',
+            opacity: [1, 0],
+            duration: 800,
+            complete: function () {
+                preloader.style.display = 'none';
+                document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+                const scene1 = document.getElementById('scene-1');
+                triggerAnimeScene('scene-1');
+                animatedScenes.add('scene-1');
+            }
+        });
+    const cursor = document.querySelector('.custom-cursor');
+    const cursorDot = document.querySelector('.custom-cursor-dot');
+    document.addEventListener('mousemove', (e) => {
+        cursorDot.style.left = e.clientX + 'px';
+        cursorDot.style.top = e.clientY + 'px';
+        cursor.animate({
+            left: `${e.clientX}px`,
+            top: `${e.clientY}px`
+        }, { duration: 500, fill: "forwards" });
+    });
+    const interactables = document.querySelectorAll('button, input, textarea, .project-card, .grid-cell');
+    interactables.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursor.classList.add('cursor-hover');
+        });
+        el.addEventListener('mouseleave', () => {
+            cursor.classList.remove('cursor-hover');
+        });
+    });
+    window.addEventListener('scroll', () => {
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrollPercentage = scrollTop / scrollHeight;
+        anime({
+            targets: ['#scroll-progress', '#scroll-line-progress'],
+            scaleX: (el) => el.id === 'scroll-progress' ? scrollPercentage : 1,
+            scaleY: (el) => el.id === 'scroll-line-progress' ? scrollPercentage : 1,
+            duration: 100,
+            easing: 'linear'
+        });
+    });
+    const particlesContainer = document.getElementById('particles-container');
+    const particleCount = 40;
+    for (let p = 0; p < particleCount; p++) {
+        const particle = document.createElement('div');
+        particle.classList.add('data-particle');
+        const startX = Math.random() * window.innerWidth;
+        const startY = Math.random() * window.innerHeight;
+        particle.style.left = `${startX}px`;
+        particle.style.top = `${startY}px`;
+        particlesContainer.appendChild(particle);
+        anime({
+            targets: particle,
+            translateX: () => (Math.random() - 0.5) * 200,
+            translateY: () => (Math.random() - 0.5) * 200,
+            opacity: [0, Math.random() * 0.8 + 0.2, 0],
+            scale: [0, Math.random() * 1.5 + 0.5, 0],
+            duration: () => Math.random() * 8000 + 5000,
+            easing: 'easeInOutSine',
+            direction: 'alternate',
+            loop: true,
+            delay: () => Math.random() * 2000
+        });
+    }
+    const gridContainer = document.getElementById('interactive-grid');
+    const cellSize = 40;
+    const columns = Math.ceil(window.innerWidth / cellSize);
+    const rows = Math.ceil(window.innerHeight / cellSize);
+    const totalCells = columns * rows;
+    for (let i = 0; i < totalCells; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('grid-cell');
+        cell.addEventListener('mouseenter', () => {
+            anime({
+                targets: cell,
+                backgroundColor: [
+                    { value: 'rgba(214, 207, 225, 0.4)', easing: 'easeOutSine', duration: 200 },
+                    { value: 'transparent', easing: 'easeInOutQuad', duration: 800 }
+                ],
+                scale: [
+                    { value: 1.3, easing: 'easeOutSine', duration: 200 },
+                    { value: 1, easing: 'easeInOutQuad', duration: 800 }
+                ],
+                zIndex: {
+                    value: [10, 0]
+                }
+            });
+        });
+        let rippleAnimation;
+        cell.addEventListener('click', () => {
+            if (rippleAnimation) rippleAnimation.pause();
+            anime.set('.grid-cell', { backgroundColor: 'transparent', scale: 1 });
+            rippleAnimation = anime({
+                targets: '.grid-cell',
+                backgroundColor: [
+                    { value: 'rgba(214, 207, 225, 0.4)', easing: 'easeOutSine', duration: 200 },
+                    { value: 'transparent', easing: 'easeInOutQuad', duration: 800 }
+                ],
+                scale: [
+                    { value: 1.2, easing: 'easeOutSine', duration: 200 },
+                    { value: 1, easing: 'easeInOutQuad', duration: 800 }
+                ],
+                delay: anime.stagger(30, { grid: [columns, rows], from: i }),
+                zIndex: {
+                    value: [10, 0]
+                }
+            });
+        });
+        gridContainer.appendChild(cell);
+    }
+    const heroText = document.querySelector('.hero-text');
+    const textContent = heroText.textContent.trim();
+    heroText.innerHTML = '';
+    const words = textContent.split(' ');
+    words.forEach((word, index) => {
+        const wordWrap = document.createElement('span');
+        wordWrap.className = 'inline-block whitespace-nowrap';
+        for (let j = 0; j < word.length; j++) {
+            wordWrap.innerHTML += `<span class="letter">${word[j]}</span>`;
+        }
+        heroText.appendChild(wordWrap);
+        if (index < words.length - 1) {
+            const space = document.createElement('span');
+            space.className = 'inline-block';
+            space.innerHTML = '&nbsp;';
+            heroText.appendChild(space);
+        }
+    });
+    const animatedScenes = new Set();
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.25
+    };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                if (!animatedScenes.has(id)) {
+                    animatedScenes.add(id);
+                    triggerAnimeScene(id);
+                }
+            }
+        });
+    }, observerOptions);
+    function triggerAnimeScene(sceneId) {
+        if (sceneId === 'scene-1') {
+            const tl1 = anime.timeline({
+                easing: 'easeOutExpo',
+                duration: 1500
+            });
+            tl1.add({
+                targets: '.hero-text .letter',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                rotateX: [90, 0],
+                delay: anime.stagger(30, { start: 200 })
+            })
+                .add({
+                    targets: '.hero-subtext',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 1200,
+                    offset: '-=800'
+                });
+            anime({
+                targets: '.bg-glow',
+                scale: [1, 1.15],
+                opacity: [0.3, 0.6],
+                rotate: [0, 10],
+                translateX: '-50%',
+                translateY: '-50%',
+                direction: 'alternate',
+                loop: true,
+                duration: 6000,
+                easing: 'easeInOutSine'
+            });
+        } else if (sceneId === 'scene-2') {
+            const tl2 = anime.timeline({ easing: 'easeOutExpo' });
+            tl2.add({
+                targets: '.about-element',
+                opacity: [0, 1],
+                translateX: (el) => {
+                    return el.classList.contains('translate-x-[30px]') ? [30, 0] : [-30, 0];
+                },
+                delay: anime.stagger(150),
+                duration: 1200
+            })
+                .add({
+                    targets: '.stat-item',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    delay: anime.stagger(150),
+                    duration: 1000,
+                    offset: '-=800'
+                });
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(num => {
+                const targetVal = parseInt(num.getAttribute('data-val'));
+                anime({
+                    targets: num,
+                    innerHTML: [0, targetVal],
+                    round: 1,
+                    easing: 'easeOutExpo',
+                    duration: 2500,
+                    delay: 800
+                });
+            });
+        } else if (sceneId === 'scene-3') {
+            const tl3 = anime.timeline({ easing: 'easeOutExpo' });
+            tl3.add({
+                targets: '.work-title',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                delay: anime.stagger(200),
+                duration: 1200
+            })
+                .add({
+                    targets: '.project-card',
+                    opacity: [0, 1],
+                    translateY: [50, 0],
+                    scale: [0.95, 1],
+                    delay: anime.stagger(200),
+                    duration: 1200,
+                    offset: '-=800'
+                });
+        } else if (sceneId === 'scene-4') {
+            const tl4 = anime.timeline({ easing: 'easeOutExpo' });
+            tl4.add({
+                targets: ['.edu-title', '.skill-title'],
+                opacity: [0, 1],
+                translateX: [-30, 0],
+                duration: 1000,
+                delay: anime.stagger(200)
+            })
+                .add({
+                    targets: '.edu-item',
+                    opacity: [0, 1],
+                    translateY: [30, 0],
+                    delay: anime.stagger(250),
+                    duration: 1200,
+                    offset: '-=800'
+                })
+                .add({
+                    targets: '.skill-group',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    delay: anime.stagger(200),
+                    duration: 1000,
+                    offset: '-=1000'
+                })
+                .add({
+                    targets: '.skill-tag',
+                    scale: [0.9, 1],
+                    backgroundColor: ['rgba(255,255,255,0)', 'rgba(255,255,255,0.01)'],
+                    delay: anime.stagger(50, { start: 200 }),
+                    duration: 800,
+                    offset: '-=600'
+                });
+        } else if (sceneId === 'scene-5') {
+            anime({
+                targets: '.vision-text',
+                opacity: [0, 1],
+                translateY: [60, 0],
+                easing: 'easeOutExpo',
+                duration: 2000
+            });
+            anime({
+                targets: '.vision-glow',
+                backgroundColor: 'rgba(214, 207, 225, 0.03)',
+                easing: 'easeOutSine',
+                duration: 3000
+            });
+        } else if (sceneId === 'scene-6') {
+            anime({
+                targets: '.contact-element',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                delay: anime.stagger(150),
+                easing: 'easeOutExpo',
+                duration: 1200
+            });
+            anime({
+                targets: '.submit-btn',
+                scale: [1, 1.03],
+                boxShadow: ['0 0 0px rgba(234, 234, 234, 0)', '0 0 20px rgba(234, 234, 234, 0.15)'],
+                direction: 'alternate',
+                loop: true,
+                easing: 'easeInOutSine',
+                duration: 2000,
+                delay: 1500
+            });
+        }
+    }
+    document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            anime({
+                targets: card,
+                scale: 1.03,
+                translateY: -8,
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+                borderColor: 'rgba(214, 207, 225, 0.2)',
+                duration: 600,
+                easing: 'easeOutExpo'
+            });
+        });
+        card.addEventListener('mouseleave', () => {
+            anime({
+                targets: card,
+                scale: 1,
+                translateY: 0,
+                boxShadow: '0 0px 0px rgba(0, 0, 0, 0)',
+                borderColor: 'rgba(255, 255, 255, 0.04)',
+                duration: 600,
+                easing: 'easeOutExpo'
+            });
+        });
+        card.addEventListener('click', () => {
+            anime({
+                targets: card,
+                scale: 0.95,
+                opacity: 0.7,
+                duration: 150,
+                easing: 'easeInSine',
+                direction: 'alternate'
+            });
+        });
+    });
+    const magneticBtns = document.querySelectorAll('.magnetic-btn');
+    magneticBtns.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            anime({
+                targets: btn,
+                translateX: x * 0.3,
+                translateY: y * 0.3,
+                duration: 400,
+                easing: 'easeOutExpo'
+            });
+            anime({
+                targets: btn.querySelectorAll('.btn-text, .btn-icon'),
+                translateX: x * 0.15,
+                translateY: y * 0.15,
+                duration: 400,
+                easing: 'easeOutExpo'
+            });
+        });
+        btn.addEventListener('mouseleave', () => {
+            anime({
+                targets: [btn, btn.querySelectorAll('.btn-text, .btn-icon')],
+                translateX: 0,
+                translateY: 0,
+                duration: 600,
+                easing: 'easeOutElastic(1, .3)'
+            });
+        });
+    });
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIconPath = document.getElementById('menu-icon-path');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+    let isMenuOpen = false;
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+            mobileMenu.style.pointerEvents = 'auto';
+            anime({
+                targets: mobileMenu,
+                opacity: 1,
+                duration: 300,
+                easing: 'easeInOutQuad'
+            });
+            anime({
+                targets: '.mobile-link',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100, { start: 100 }),
+                duration: 600,
+                easing: 'easeOutExpo'
+            });
+            menuIconPath.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+            document.body.style.overflow = 'hidden';
+        } else {
+            mobileMenu.style.pointerEvents = 'none';
+            anime({
+                targets: mobileMenu,
+                opacity: 0,
+                duration: 300,
+                easing: 'easeInOutQuad'
+            });
+            menuIconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            document.body.style.overflow = '';
+        }
+    }
+    mobileMenuBtn.addEventListener('click', toggleMenu);
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (isMenuOpen) toggleMenu();
+        });
+    });
+    let lastScrollY = window.scrollY;
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        if (!isMenuOpen) {
+            if (window.scrollY > lastScrollY && window.scrollY > 100) {
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+        }
+        if (window.scrollY > 50) {
+            navbar.classList.add('backdrop-blur-xl', 'shadow-lg');
+            navbar.classList.replace('bg-soft/80', 'bg-soft/95');
+            navbar.classList.replace('dark:bg-dark/80', 'dark:bg-dark/95');
+        } else {
+            navbar.classList.remove('backdrop-blur-xl', 'shadow-lg');
+            navbar.classList.replace('bg-soft/95', 'bg-soft/80');
+            navbar.classList.replace('dark:bg-dark/95', 'dark:bg-dark/80');
+        }
+        lastScrollY = window.scrollY;
+    }, { passive: true });
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    let isDarkMode = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (localStorage.getItem('theme') === null) {
+        isDarkMode = true;
+    }
+    function applyTheme() {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+            darkIcon.classList.remove('hidden');
+            lightIcon.classList.add('hidden');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            lightIcon.classList.remove('hidden');
+            darkIcon.classList.add('hidden');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+    applyTheme();
+
+    themeToggleBtn.addEventListener('click', () => {
+        isDarkMode = !isDarkMode;
+        anime({
+            targets: themeToggleBtn,
+            rotate: '+=360',
+            duration: 600,
+            easing: 'easeOutExpo'
+        });
+        applyTheme();
+    });
+
+    // Aadhi Chatbot Logic
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatWindow = document.getElementById('chat-window');
+    const chatIcon = document.getElementById('chat-icon');
+    const closeChatIcon = document.getElementById('close-chat-icon');
+    const chatHistory = document.getElementById('chat-history');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const quickBtns = document.querySelectorAll('.quick-btn');
+
+    const chatData = [
+        {
+            keywords: ["hi", "hello", "hey", "greet", "morning", "evening"],
+            response: "Hello! I'm Aadhi. How's your day going? I can help you learn more about Aadhithiya's AI expertise and projects."
+        },
+        {
+            keywords: ["about", "who are you", "what is aadhi", "assistant", "purpose"],
+            response: "I'm Aadhithiya's AI virtual assistant. I was built to help visitors explore his portfolio and learn about his skills in Machine Learning, Deep Learning, and AI Engineering."
+        },
+        {
+            keywords: ["project", "work", "portfolio", "built", "show", "github", "studymate", "rag", "agent", "medical", "diagnosis"],
+            response: "Aadhithiya has built several intelligent systems, including: \n1. **Studymate** (RAG-based Study Engine)\n2. **Content Research Agent** (Langchain/OpenAI)\n3. **Medical Diagnosis System** (FastAPI)\n\nYou can see the details in the 'Work' section!"
+        },
+        {
+            keywords: ["contact", "email", "linkedin", "reach", "hire", "social", "message"],
+            response: "You can reach Aadhithiya via email at **aadhithiyajayaraman@gmail.com** or connect on [LinkedIn](https://www.linkedin.com/in/aadhi-j-8a0671292). He's always open to collaborating on innovative AI projects!"
+        },
+        {
+            keywords: ["skills", "expertise", "tech", "languages", "tools", "pytorch", "tensorflow", "python", "docker", "aws", "mlops"],
+            response: "Aadhithiya's technical arsenal includes PyTorch, TensorFlow, LLMs, Computer Vision (OpenCV), and MLOps tools like Docker, MLflow, and AWS SageMaker. He's also proficient in Python and C++."
+        },
+        {
+            keywords: ["education", "college", "degree", "university", "ibm", "iit", "study", "learning"],
+            response: "He is currently pursuing a B.E. in Computer Science (2023-Present) with a focus on Deep Learning. He also holds certifications in AI Fundamentals (IBM) and Cloud Computing (IIT Kharagpur)."
+        },
+        {
+            keywords: ["thank", "thanks", "wow", "cool", "nice", "great"],
+            response: "You're very welcome! I'm here to make your visit smooth. Do you want to see his latest projects or skills?"
+        },
+        {
+            keywords: ["bye", "goodbye", "exit", "close"],
+            response: "Goodbye! It was a pleasure chatting with you. Feel free to come back if you need anything else!"
+        }
+    ];
+
+    const defaultResponse = "That's an interesting question! While I'm still learning, I can definitely tell you about Aadhithiya's AI projects, technical skills, or contact info. Why not try one of the quick actions below?";
+
+    function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message flex ${isUser ? 'justify-end' : 'gap-2'}`;
+
+        if (isUser) {
+            messageDiv.innerHTML = `
+                <div class="bg-accent-dark dark:bg-accent p-3 rounded-2xl rounded-tr-none text-sm text-white dark:text-dark max-w-[85%] border border-accent/20">
+                    ${text}
+                </div>
+            `;
+        } else {
+            // Replace newlines with <br> for better formatting
+            const formattedText = text.replace(/\n/g, '<br>');
+            messageDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-accent/20 flex-shrink-0 flex items-center justify-center text-[10px] text-accent-dark dark:text-accent font-bold">A</div>
+                <div class="bg-dark/5 dark:bg-white/5 p-3 rounded-2xl rounded-tl-none text-sm text-dark/80 dark:text-soft/80 max-w-[85%] border border-dark/5 dark:border-white/5">
+                    ${formattedText}
+                </div>
+            `;
+        }
+
+        chatHistory.appendChild(messageDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+        const indicator = document.createElement('div');
+        indicator.id = 'typing-indicator';
+        indicator.className = 'message flex gap-2';
+        indicator.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-accent/20 flex-shrink-0 flex items-center justify-center text-[10px] text-accent-dark dark:text-accent font-bold">A</div>
+            <div class="bg-dark/5 dark:bg-white/5 p-3 rounded-2xl rounded-tl-none text-sm text-dark/40 dark:text-soft/40 flex items-center gap-1 border border-dark/5 dark:border-white/5">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        `;
+        chatHistory.appendChild(indicator);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+        return indicator;
+    }
+
+    function handleChat(input) {
+        const userText = input.toLowerCase().trim();
+        addMessage(input, true);
+
+        const indicator = showTypingIndicator();
+
+        setTimeout(() => {
+            if (indicator) indicator.remove();
+
+            let bestMatch = null;
+            let maxKeywords = 0;
+
+            for (const item of chatData) {
+                const matchCount = item.keywords.filter(kw => userText.includes(kw)).length;
+                if (matchCount > maxKeywords) {
+                    maxKeywords = matchCount;
+                    bestMatch = item.response;
+                }
+            }
+
+            const response = bestMatch || defaultResponse;
+            addMessage(response);
+        }, 1200);
+    }
+
+    chatToggle.addEventListener('click', () => {
+        chatWindow.classList.toggle('active');
+        chatIcon.classList.toggle('hidden');
+        closeChatIcon.classList.toggle('hidden');
+
+        if (chatWindow.classList.contains('active')) {
+            anime({
+                targets: chatWindow,
+                translateY: [20, 0],
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutExpo'
+            });
+        }
+    });
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if (text) {
+            handleChat(text);
+            chatInput.value = '';
+        }
+    });
+
+    quickBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            handleChat(btn.textContent);
+        });
+    });
+
+    // Add pointer events for chatbot elements (cursor interaction)
+    const chatInteractables = [chatToggle, chatInput, chatForm.querySelector('button'), ...quickBtns];
+    chatInteractables.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+    });
+});
+
