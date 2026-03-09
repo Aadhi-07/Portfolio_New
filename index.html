@@ -76,17 +76,17 @@
         style="width: 100%; transform: scaleX(0);"></div>
 
     <!-- Navigation Bar -->
-    <nav class="fixed top-0 w-full z-40 bg-soft/80 dark:bg-dark/80 backdrop-blur-md border-b border-dark/[0.05] dark:border-white/[0.05] transition-all duration-500"
+    <nav class="hidden md:block fixed top-0 w-full z-40 bg-soft/80 dark:bg-dark/80 backdrop-blur-md border-b border-dark/[0.05] dark:border-white/[0.05] transition-all duration-500"
         id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
+            <div class="flex items-center justify-between h-16 md:h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
                     <a href="#scene-2"
-                        class="text-accent-dark dark:text-accent font-bold text-xl tracking-widest font-mono hover:text-dark dark:hover:text-white transition-colors">AJ.</a>
+                        class="text-accent-dark dark:text-accent font-bold text-lg md:text-xl tracking-widest font-mono hover:text-dark dark:hover:text-white transition-colors">AJ.</a>
                 </div>
 
-                <!-- Desktop Menu & Theme Toggle -->
+                <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center">
                     <div class="ml-10 flex items-baseline space-x-8 mr-6">
                         <a href="#scene-2"
@@ -98,28 +98,12 @@
                         <a href="#scene-6"
                             class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors tracking-wide">Contact</a>
                     </div>
-
-                    <!-- Theme Toggle -->
-                    <button id="theme-toggle"
-                        class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent focus:outline-none p-2 rounded-full hover:bg-dark/5 dark:hover:bg-white/5 transition-colors"
-                        title="Toggle Theme">
-                        <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                        </svg>
-                        <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 4.22a1 1 0 011.415 0l.708.708a1 1 0 01-1.414 1.414l-.708-.708a1 1 0 010-1.414zM16 10a1 1 0 011 1h1a1 1 0 110-2h-1a1 1 0 01-1 1zm-4.22 4.22a1 1 0 010 1.415l-.708.708a1 1 0 01-1.414-1.414l.708-.708a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-4.22a1 1 0 01-1.415 0l-.708-.708a1 1 0 011.414-1.414l.708.708a1 1 0 010 1.414zM4 10a1 1 0 01-1-1H2a1 1 0 110 2h1a1 1 0 011-1zm4.22-4.22a1 1 0 010-1.415l.708-.708a1 1 0 011.414 1.414l-.708.708a1 1 0 01-1.414 0z">
-                            </path>
-                        </svg>
-                    </button>
                 </div>
 
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-btn"
-                        class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent focus:outline-none p-2 relative z-50">
+                        class="text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent focus:outline-none p-3 -mr-2 rounded-md relative z-50">
                         <svg class="w-6 h-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -132,16 +116,16 @@
 
         <!-- Mobile Menu Panel -->
         <div id="mobile-menu"
-            class="fixed inset-0 bg-soft/95 dark:bg-dark/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="flex flex-col space-y-8 text-center text-2xl font-light tracking-widest">
+            class="fixed inset-0 bg-soft/95 dark:bg-dark/95 backdrop-blur-xl z-50 flex flex-col items-stretch justify-start pt-24 pb-8 opacity-0 pointer-events-none transition-opacity duration-300 overflow-y-auto">
+            <div class="w-full max-w-xs mx-auto px-6 flex flex-col gap-4">
                 <a href="#scene-2"
-                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">About</a>
+                    class="mobile-link w-full text-center text-lg font-medium tracking-[0.15em] uppercase text-dark/75 dark:text-soft/75 hover:text-accent-dark dark:hover:text-accent border border-dark/10 dark:border-white/10 rounded-xl py-3 bg-dark/[0.02] dark:bg-white/[0.02] transition-all duration-300 translate-y-4 opacity-0">About</a>
                 <a href="#scene-3"
-                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">Work</a>
+                    class="mobile-link w-full text-center text-lg font-medium tracking-[0.15em] uppercase text-dark/75 dark:text-soft/75 hover:text-accent-dark dark:hover:text-accent border border-dark/10 dark:border-white/10 rounded-xl py-3 bg-dark/[0.02] dark:bg-white/[0.02] transition-all duration-300 translate-y-4 opacity-0">Work</a>
                 <a href="#scene-4"
-                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">Skills</a>
+                    class="mobile-link w-full text-center text-lg font-medium tracking-[0.15em] uppercase text-dark/75 dark:text-soft/75 hover:text-accent-dark dark:hover:text-accent border border-dark/10 dark:border-white/10 rounded-xl py-3 bg-dark/[0.02] dark:bg-white/[0.02] transition-all duration-300 translate-y-4 opacity-0">Skills</a>
                 <a href="#scene-6"
-                    class="mobile-link text-dark/70 dark:text-soft/70 hover:text-accent-dark dark:hover:text-accent transition-colors translate-y-4 opacity-0">Contact</a>
+                    class="mobile-link w-full text-center text-lg font-medium tracking-[0.15em] uppercase text-dark/75 dark:text-soft/75 hover:text-accent-dark dark:hover:text-accent border border-dark/10 dark:border-white/10 rounded-xl py-3 bg-dark/[0.02] dark:bg-white/[0.02] transition-all duration-300 translate-y-4 opacity-0">Contact</a>
             </div>
         </div>
     </nav>
@@ -176,6 +160,12 @@
             <p class="hero-subtext text-xl md:text-2xl font-light text-dark/80 dark:text-soft/80 translate-y-4">
                 I design and deploy intelligent systems at scale.
             </p>
+        </div>
+
+        <div
+            class="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 text-[11px] md:text-xs uppercase tracking-[0.2em] text-dark/45 dark:text-soft/45 pointer-events-none">
+            <span class="hidden md:inline">Tap to randomize</span>
+            <span class="md:hidden"></span>
         </div>
     </section>
 

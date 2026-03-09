@@ -30,6 +30,22 @@ body {
     background: radial-gradient(circle at 50% 45%, rgba(214, 207, 225, 0.12), transparent 58%);
 }
 
+@media (max-width: 767px) {
+    html {
+        cursor: auto;
+    }
+
+    #scene-1 {
+        min-height: 100svh;
+        padding-top: 6rem;
+        padding-bottom: 3rem;
+    }
+
+    #tubes-background {
+        pointer-events: none;
+    }
+}
+
 .custom-cursor {
     position: fixed;
     top: 0;

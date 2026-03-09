@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+
     const preloaderText = document.querySelector('.preloader-text');
     const preloader = document.getElementById('preloader');
     const tlPreload = anime.timeline({
@@ -41,6 +44,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const scene1 = document.getElementById('scene-1');
     const tubesCanvas = document.getElementById('tubes-canvas');
+    const tubesLayer = document.getElementById('tubes-background');
+    const gridContainer = document.getElementById('interactive-grid');
+    const tubesConfig = {
+        enableClickInteraction: true,
+        colors: ['#f967fb', '#53bc28', '#6958d5'],
+        lights: {
+            intensity: 180,
+            colors: ['#83f36e', '#fe8a2e', '#ff008a', '#60aed5']
+        }
+    };
+    const canUseTubes = Boolean(
+        scene1 &&
+        tubesCanvas &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
     let tubesApp = null;
 
     const randomHexColor = () => `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
@@ -58,7 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const initTubesBackground = async () => {
         if (!scene1 || !tubesCanvas) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (!canUseTubes) {
+            if (tubesLayer) tubesLayer.style.display = 'none';
+            if (gridContainer) {
+                gridContainer.classList.remove('pointer-events-none', 'opacity-10');
+                gridContainer.classList.add('pointer-events-auto', 'opacity-20');
+            }
+            return;
+        }
 
         try {
             const module = await import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js');
@@ -67,15 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tubesApp = TubesCursor(tubesCanvas, {
                 tubes: {
-                    colors: ['#f967fb', '#53bc28', '#6958d5'],
-                    lights: {
-                        intensity: 180,
-                        colors: ['#83f36e', '#fe8a2e', '#ff008a', '#60aed5']
-                    }
+                    colors: tubesConfig.colors,
+                    lights: tubesConfig.lights
                 }
             });
 
             scene1.addEventListener('click', (event) => {
+                if (!tubesConfig.enableClickInteraction) return;
                 const interactive = event.target.closest('a, button, input, textarea, select, label');
                 if (!interactive) {
                     randomizeTubeColors();
@@ -83,8 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error('Failed to initialize tubes background:', error);
-            const tubesLayer = document.getElementById('tubes-background');
             if (tubesLayer) tubesLayer.style.display = 'none';
+            if (gridContainer) {
+                gridContainer.classList.remove('pointer-events-none', 'opacity-10');
+                gridContainer.classList.add('pointer-events-auto', 'opacity-20');
+            }
         }
     };
 
@@ -133,8 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             delay: () => Math.random() * 2000
         });
     }
-    const gridContainer = document.getElementById('interactive-grid');
-    if (gridContainer && !tubesCanvas) {
+    if (gridContainer && !canUseTubes) {
         const cellSize = 40;
         const columns = Math.ceil(window.innerWidth / cellSize);
         const rows = Math.ceil(window.innerHeight / cellSize);
@@ -476,12 +501,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastScrollY = window.scrollY;
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
-        if (!isMenuOpen) {
+        const isDesktop = window.innerWidth >= 768;
+        if (!isMenuOpen && isDesktop) {
             if (window.scrollY > lastScrollY && window.scrollY > 100) {
                 navbar.style.transform = 'translateY(-100%)';
             } else {
                 navbar.style.transform = 'translateY(0)';
             }
+        } else if (!isDesktop) {
+            navbar.style.transform = 'translateY(0)';
         }
         if (window.scrollY > 50) {
             navbar.classList.add('backdrop-blur-xl', 'shadow-lg');
@@ -494,35 +522,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         lastScrollY = window.scrollY;
     }, { passive: true });
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const darkIcon = document.getElementById('theme-toggle-dark-icon');
-    const lightIcon = document.getElementById('theme-toggle-light-icon');
-    let isDarkMode = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    if (localStorage.getItem('theme') === null) {
-        isDarkMode = true;
-    }
-    function applyTheme() {
-        if (isDarkMode) {
-            document.documentElement.classList.add('dark');
-            darkIcon.classList.remove('hidden');
-            lightIcon.classList.add('hidden');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            lightIcon.classList.remove('hidden');
-            darkIcon.classList.add('hidden');
-            localStorage.setItem('theme', 'light');
-        }
-    }
-    applyTheme();
-    themeToggleBtn.addEventListener('click', () => {
-        isDarkMode = !isDarkMode;
-        anime({
-            targets: themeToggleBtn,
-            rotate: '+=360',
-            duration: 600,
-            easing: 'easeOutExpo'
-        });
-        applyTheme();
-    });
 });
