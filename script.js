@@ -38,6 +38,57 @@ document.addEventListener('DOMContentLoaded', () => {
             top: `${e.clientY}px`
         }, { duration: 500, fill: "forwards" });
     });
+
+    const scene1 = document.getElementById('scene-1');
+    const tubesCanvas = document.getElementById('tubes-canvas');
+    let tubesApp = null;
+
+    const randomHexColor = () => `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+    const randomColors = (count) => Array.from({ length: count }, randomHexColor);
+
+    const randomizeTubeColors = () => {
+        if (!tubesApp || !tubesApp.tubes) return;
+        if (typeof tubesApp.tubes.setColors === 'function') {
+            tubesApp.tubes.setColors(randomColors(3));
+        }
+        if (typeof tubesApp.tubes.setLightsColors === 'function') {
+            tubesApp.tubes.setLightsColors(randomColors(4));
+        }
+    };
+
+    const initTubesBackground = async () => {
+        if (!scene1 || !tubesCanvas) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        try {
+            const module = await import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js');
+            const TubesCursor = module.default;
+            if (typeof TubesCursor !== 'function') return;
+
+            tubesApp = TubesCursor(tubesCanvas, {
+                tubes: {
+                    colors: ['#f967fb', '#53bc28', '#6958d5'],
+                    lights: {
+                        intensity: 180,
+                        colors: ['#83f36e', '#fe8a2e', '#ff008a', '#60aed5']
+                    }
+                }
+            });
+
+            scene1.addEventListener('click', (event) => {
+                const interactive = event.target.closest('a, button, input, textarea, select, label');
+                if (!interactive) {
+                    randomizeTubeColors();
+                }
+            });
+        } catch (error) {
+            console.error('Failed to initialize tubes background:', error);
+            const tubesLayer = document.getElementById('tubes-background');
+            if (tubesLayer) tubesLayer.style.display = 'none';
+        }
+    };
+
+    initTubesBackground();
     const interactables = document.querySelectorAll('button, input, textarea, .project-card, .grid-cell');
     interactables.forEach(el => {
         el.addEventListener('mouseenter', () => {
@@ -83,50 +134,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     const gridContainer = document.getElementById('interactive-grid');
-    const cellSize = 40;
-    const columns = Math.ceil(window.innerWidth / cellSize);
-    const rows = Math.ceil(window.innerHeight / cellSize);
-    const totalCells = columns * rows;
-    for (let i = 0; i < totalCells; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('grid-cell');
-        cell.addEventListener('mouseenter', () => {
-            anime({
-                targets: cell,
-                backgroundColor: [
-                    { value: 'rgba(214, 207, 225, 0.4)', easing: 'easeOutSine', duration: 200 },
-                    { value: 'transparent', easing: 'easeInOutQuad', duration: 800 }
-                ],
-                scale: [
-                    { value: 1.3, easing: 'easeOutSine', duration: 200 },
-                    { value: 1, easing: 'easeInOutQuad', duration: 800 }
-                ],
-                zIndex: {
-                    value: [10, 0]
-                }
+    if (gridContainer && !tubesCanvas) {
+        const cellSize = 40;
+        const columns = Math.ceil(window.innerWidth / cellSize);
+        const rows = Math.ceil(window.innerHeight / cellSize);
+        const totalCells = columns * rows;
+        for (let i = 0; i < totalCells; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('grid-cell');
+            cell.addEventListener('mouseenter', () => {
+                anime({
+                    targets: cell,
+                    backgroundColor: [
+                        { value: 'rgba(214, 207, 225, 0.4)', easing: 'easeOutSine', duration: 200 },
+                        { value: 'transparent', easing: 'easeInOutQuad', duration: 800 }
+                    ],
+                    scale: [
+                        { value: 1.3, easing: 'easeOutSine', duration: 200 },
+                        { value: 1, easing: 'easeInOutQuad', duration: 800 }
+                    ],
+                    zIndex: {
+                        value: [10, 0]
+                    }
+                });
             });
-        });
-        let rippleAnimation;
-        cell.addEventListener('click', () => {
-            if (rippleAnimation) rippleAnimation.pause();
-            anime.set('.grid-cell', { backgroundColor: 'transparent', scale: 1 });
-            rippleAnimation = anime({
-                targets: '.grid-cell',
-                backgroundColor: [
-                    { value: 'rgba(214, 207, 225, 0.4)', easing: 'easeOutSine', duration: 200 },
-                    { value: 'transparent', easing: 'easeInOutQuad', duration: 800 }
-                ],
-                scale: [
-                    { value: 1.2, easing: 'easeOutSine', duration: 200 },
-                    { value: 1, easing: 'easeInOutQuad', duration: 800 }
-                ],
-                delay: anime.stagger(30, { grid: [columns, rows], from: i }),
-                zIndex: {
-                    value: [10, 0]
-                }
+            let rippleAnimation;
+            cell.addEventListener('click', () => {
+                if (rippleAnimation) rippleAnimation.pause();
+                anime.set('.grid-cell', { backgroundColor: 'transparent', scale: 1 });
+                rippleAnimation = anime({
+                    targets: '.grid-cell',
+                    backgroundColor: [
+                        { value: 'rgba(214, 207, 225, 0.4)', easing: 'easeOutSine', duration: 200 },
+                        { value: 'transparent', easing: 'easeInOutQuad', duration: 800 }
+                    ],
+                    scale: [
+                        { value: 1.2, easing: 'easeOutSine', duration: 200 },
+                        { value: 1, easing: 'easeInOutQuad', duration: 800 }
+                    ],
+                    delay: anime.stagger(30, { grid: [columns, rows], from: i }),
+                    zIndex: {
+                        value: [10, 0]
+                    }
+                });
             });
-        });
-        gridContainer.appendChild(cell);
+            gridContainer.appendChild(cell);
+        }
     }
     const heroText = document.querySelector('.hero-text');
     const textContent = heroText.textContent.trim();

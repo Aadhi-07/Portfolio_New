@@ -150,9 +150,14 @@
     <section id="scene-1"
         class="relative flex flex-col items-center justify-center min-h-screen z-10 py-20 px-4 md:px-8 overflow-hidden">
 
+        <!-- Tubes 3D Background -->
+        <div id="tubes-background" class="absolute inset-0 z-0 pointer-events-auto">
+            <canvas id="tubes-canvas" aria-hidden="true"></canvas>
+        </div>
+
         <!-- Interactive Grid Background for Anime.js stagger -->
         <div id="interactive-grid"
-            class="absolute inset-0 z-0 flex flex-wrap content-center justify-center opacity-20 pointer-events-auto">
+            class="absolute inset-0 z-[1] flex flex-wrap content-center justify-center opacity-10 pointer-events-none">
             <!-- Grid generated via JS -->
         </div>
 
